@@ -1,0 +1,10 @@
+# Ignore MP3
+*.mp3
+
+# Ignore image
+*.jpg
+*.png
+
+# Ignore 
+/ressources/music/
+/ressources/images/
