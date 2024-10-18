@@ -1,6 +1,7 @@
 const musicData = [
     {title: "solar", artist: "Betical", id: 1}, 
     {title: "electric", artist: "Teemid", id: 2}, 
+    {title: "pop", artist: "Popsy", id: 3}, 
 ]; 
 const musicPlayer = document.querySelector('audio'); 
 const musicTitle = document.querySelector('.music-title');
@@ -123,18 +124,52 @@ function setProgress(e) {
 /* ***************** Change music ***************** */ 
 
 
+const shuffleBtn = document.querySelector('.shuffle'); 
+shuffleBtn.addEventListener('click', switchShuffle); 
+let shuffle = false; 
+
+/**
+ * active shuffle btn 
+ */
+function switchShuffle() {
+    shuffleBtn.classList.toggle('active');
+    shuffle = !shuffle; 
+}
+
 const nextBtn = document.querySelector('.next-btn'); 
 const prevBtn = document.querySelector('.prev-btn'); 
 
 [prevBtn, nextBtn].forEach(btn => btn.addEventListener('click', changeSong)); 
 musicPlayer.addEventListener('ended', changeSong); 
 
+/**
+ * Change the music
+ */
 function changeSong(e) {
-    e.target.classList.contains('.next-btn') || e.type === 'ended' ? currentMusicIndex++ : currentMusicIndex-- ; 
+    if (shuffle) {
+        console.log('shuffle')
+        playShuffledSong(); 
+        return; 
+    }
+
+    e.target.classList.contains('next-btn') || e.type === 'ended' ? 
+    currentMusicIndex++ : currentMusicIndex-- ; 
 
     if (currentMusicIndex < 1) currentMusicIndex = musicData.length; // to the last one
     else if (currentMusicIndex > musicData.length)  currentMusicIndex = 1; 
 
     populateUI(musicData[currentMusicIndex -1]); 
+    play();
+}
+
+/**
+ * Play shuffled music 
+ */
+function playShuffledSong() {
+    const musicWithoutCurrentSong = musicData.filter(el => el.id !== currentMusicIndex);
+    const randomMusic = musicWithoutCurrentSong[Math.trunc(Math.random() * musicWithoutCurrentSong.length)];
+    
+    currentMusicIndex = randomMusic.id; 
+    populateUI(randomMusic);
     play();
 }
