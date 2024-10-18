@@ -1,8 +1,6 @@
 const musicData = [
-    {title: "Solar", artist: "Betical", id: 1}, 
-    {title: "Electric", artist: "Teemid", id: 2}, 
-    {title: "Aurora", artist: "Slumb", id: 3}, 
-    {title: "Lost-Colours", artist: "Fakear", id: 4}, 
+    {title: "solar", artist: "Betical", id: 1}, 
+    {title: "electric", artist: "Teemid", id: 2}, 
 ]; 
 const musicPlayer = document.querySelector('audio'); 
 const musicTitle = document.querySelector('.music-title');
@@ -16,7 +14,7 @@ let currentMusicIndex = 1;
  * Update the interface of the audio player (destructuring)
  */
 function populateUI({title, artist}) {
-    musicTitle.textContent = title;
+    musicTitle.textContent = title.toUpperCase();
     artistName.textContent = artist; 
     thumbnail.src = `ressources/images/${title}.png`; 
     musicPlayer.src = `ressources/music/${title}.mp3`; 
@@ -119,4 +117,24 @@ let width = rect.width;
 function setProgress(e) {
     const x = e.clientX - rect.left; 
     musicPlayer.currentTime = (x / width) * totalDuration; // pourcentage (0.) * totalDuration
+}
+
+
+/* ***************** Change music ***************** */ 
+
+
+const nextBtn = document.querySelector('.next-btn'); 
+const prevBtn = document.querySelector('.prev-btn'); 
+
+[prevBtn, nextBtn].forEach(btn => btn.addEventListener('click', changeSong)); 
+musicPlayer.addEventListener('ended', changeSong); 
+
+function changeSong(e) {
+    e.target.classList.contains('.next-btn') || e.type === 'ended' ? currentMusicIndex++ : currentMusicIndex-- ; 
+
+    if (currentMusicIndex < 1) currentMusicIndex = musicData.length; // to the last one
+    else if (currentMusicIndex > musicData.length)  currentMusicIndex = 1; 
+
+    populateUI(musicData[currentMusicIndex -1]); 
+    play();
 }
