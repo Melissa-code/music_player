@@ -13,8 +13,7 @@ const indexTxt = document.querySelector('.current-index');
 let currentMusicIndex = 1;
 
 /**
- * Update the interface
- * destructuring
+ * Update the interface of the audio player (destructuring)
  */
 function populateUI({title, artist}) {
     musicTitle.textContent = title;
@@ -24,10 +23,11 @@ function populateUI({title, artist}) {
     indexTxt.textContent = `${currentMusicIndex}/${musicData.length}`; 
 }
 
-populateUI(musicData[currentMusicIndex - 1]);//first
+populateUI(musicData[currentMusicIndex - 1]); //first 0
 
 
 let playbtn = document.querySelector('.play-btn'); 
+
 playbtn.addEventListener('click', handlePlayPause)
 
 function handlePlayPause() {
@@ -46,6 +46,9 @@ function pause() {
 }
 
 
+/* ***************** display the current time and the total duration ***************** */
+
+
 const displayCurrentTime = document.querySelector('.current-time'); 
 const durationTime = document.querySelector('.duration-time'); 
 const progressBar = document.querySelector('.progress-bar');
@@ -55,8 +58,9 @@ musicPlayer.addEventListener('loadeddata', fillDurationVariables);
 let current;
 let totalDuration;
 
- console.log(musicPlayer.duration)
-
+/**
+ * Manage and display the time of the music 
+ */
 function fillDurationVariables() {
     current = musicPlayer.currentTime;
     totalDuration = musicPlayer.duration;
@@ -65,6 +69,9 @@ function fillDurationVariables() {
     formatValue(totalDuration, durationTime);
 }
 
+/**
+ *  Format the current time and the total duration
+ */
 function formatValue(value, element) {
     const currentMinutes = Math.trunc(value / 60);
     let currentSeconds = Math.trunc(value % 60);
@@ -77,15 +84,39 @@ function formatValue(value, element) {
 }
 
 
+/* ***************** Update the progress bar ***************** */
+
+
 musicPlayer.addEventListener('timeupdate', updateProgress); 
 
+/**
+ * Update the progress bar 
+ */
 function updateProgress(e) {
     current = e.srcElement.currentTime; 
-    //console.log(current)
 
     const progressValue = current / totalDuration; 
     progressBar.style.transform = `scaleX(${progressValue})`; 
 
     formatValue(current, displayCurrentTime); 
+}
 
+
+/* ***************** Click on the progress bar ***************** */ 
+
+
+const musicTrack = document.querySelector('audio'); 
+const progressBarContainer = document.querySelector('.progress-container'); 
+
+progressBarContainer.addEventListener('click', setProgress); 
+
+let rect = progressBarContainer.getBoundingClientRect(); // return rect avec remplissage et bordure 
+let width = rect.width; 
+
+/**
+ * Click on the progress bar
+ */
+function setProgress(e) {
+    const x = e.clientX - rect.left; 
+    musicPlayer.currentTime = (x / width) * totalDuration; // pourcentage (0.) * totalDuration
 }
